@@ -1,5 +1,8 @@
 # --- Python Core ---
 __pycache__/
+
+# 书籍 PDF 只留在本机，不进入公开仓库
+.cursor/skills/a-share-stock-analysis/references/books_pdf/*.pdf
 *.py[cod]
 *$py.class
 
