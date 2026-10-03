@@ -59,6 +59,9 @@ dependencies = [
 [project.urls]
 Homepage = "https://github.com/akfamily/akshare"
 
+[project.scripts]
+akshare = "akshare.cli:main"
+
 # 开发依赖走 PEP 735 dependency-groups 而非 extra。extra 会随包发布，
 # 原先的 dev extra 意味着终端用户 pip install akshare[dev] 会被装上
 # pre-commit、sphinx、ruff 这些与使用本库无关的工具链；组不会进入包元数据。

@@ -35,6 +35,37 @@ ak.function_name(...)
 Do not assume users need to import submodules directly unless you are working on
 AKShare internals.
 
+## Agent CLI Entry Point
+
+AKShare ships a command line entry point so that agents and terminal users can
+discover and call interfaces without writing throwaway Python:
+
+```bash
+akshare search "A股 历史行情"     # offline interface discovery
+akshare info stock_zh_a_hist      # parameters, output columns, example
+akshare categories                # all categories with interface counts
+akshare call stock_zh_a_hist \
+  --arg symbol=000001 --arg period=daily \
+  --arg start_date=20240101 --arg end_date=20240131 \
+  --arg adjust= --head 10
+```
+
+It is also available as `python -m akshare`, and inside this repository as
+`uv run akshare ...`.
+
+Conventions for `call`:
+
+- `--arg key=value` passes the value as a string and never infers a type, so
+  symbols with leading zeros survive intact.
+- `--kwargs '{"limit": 10}'` passes non-string types; it can be combined with
+  `--arg`, which takes precedence.
+- `--head N` limits displayed rows (default 20, `0` means all).
+- `--format table|json|csv` selects the output format. With `json` and `csv`,
+  stdout carries only data; truncation notices go to stderr.
+
+Prefer this CLI for one-off data retrieval. Switch to Python when the result
+needs further computation, plotting, or persistence.
+
 ## Documentation
 
 Main entry points:
