@@ -1,0 +1,18 @@
+#!/bin/sh
+# git pull / merge 之后：依赖清单有变动才重新同步环境。
+set -eu
+
+ROOT=$(git rev-parse --show-toplevel)
+cd "$ROOT"
+
+if [ ! -f "$ROOT/scripts/dev_sync.sh" ]; then
+    exit 0
+fi
+
+if [ -n "${ORIG_HEAD:-}" ] && git rev-parse --verify --quiet ORIG_HEAD >/dev/null; then
+    if ! git diff --name-only ORIG_HEAD HEAD | grep -qE '^(uv\.lock|pyproject\.toml|extensions/)'; then
+        exit 0
+    fi
+fi
+
+exec "$ROOT/scripts/dev_sync.sh"

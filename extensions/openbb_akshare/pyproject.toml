@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "openbb-akshare"
+version = "0.1.0"
+description = "OpenBB V5 provider that serves A-share data from the local AKShare tree"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+dependencies = [
+    "akshare",
+    "openbb-core[pandas]>=2.0.0",
+]
+
+[project.entry-points."openbb_provider_extension"]
+akshare = "openbb_akshare:akshare_provider"
+
+[project.entry-points."openbb_core_extension"]
+akshare = "openbb_akshare.router:router"
+
+[tool.setuptools.packages.find]
+include = ["openbb_akshare*"]
+
+[tool.uv.sources]
+akshare = { workspace = true }

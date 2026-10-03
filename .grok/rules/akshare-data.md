@@ -38,4 +38,8 @@ uv run akshare call stock_zh_a_hist \
 
 替代源的列名、字段单位与复权口径与东方财富不同，换源后先跑 `info` 核对再用。
 
+## OpenBB（可选）
+
+标准化 A 股日线 / 快照用 `obb.akshare.historical` / `obb.akshare.quote`。环境用 `./scripts/dev_sync.sh` 安装（会 `uv sync` + `openbb-build`，并挂上 pull 后自动同步）。其余接口一律走 `uv run akshare`。
+
 接口命名约定与类目划分见 `llms.txt`，分类接口文档见 `docs/data/`。

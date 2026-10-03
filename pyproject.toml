@@ -80,13 +80,45 @@ test = ["pytest>=8.0.0"]
 # 原先声明的 ruff-lsp 已被 Astral 归档（PyPI 停在 0.0.62 / 2025-02，
 # 包自身即会打印废弃警告并指向 ruff server），故不再声明。
 lint = ["ruff==0.16.8"]
+# OpenBB 扩展及其传递依赖（openbb-core 等）全部锁进 uv.lock。
+# 放进 dev 组，是为了本仓库 `uv sync` 在各台机器上复现同一套环境；
+# 组不会进入发布到 PyPI 的包元数据。
+openbb = [
+    "openbb-akshare",
+    # 官方 V5 provider。解析失败的包不要留在这里。需要 Key 的源照样安装，
+    # 未配置时研究因子返回 missing，不让整份结论失败。
+    "openbb-bls",
+    "openbb-cboe",
+    "openbb-cftc",
+    "openbb-deribit",
+    "openbb-ecb",
+    "openbb-us-eia",
+    "openbb-famafrench",
+    "openbb-federal-reserve",
+    "openbb-finra",
+    "openbb-fred",
+    "openbb-government-us",
+    "openbb-imf",
+    "openbb-jodi",
+    "openbb-nasdaq",
+    "openbb-oecd",
+    "openbb-sec",
+    "openbb-tmx",
+]
 dev = [
     { include-group = "test" },
     { include-group = "lint" },
+    { include-group = "openbb" },
     "commitizen>=4.12.1",
     "pre-commit>=3.6.2",
     "mplfinance>=0.12.10b0",
 ]
+
+[tool.uv.workspace]
+members = ["extensions/openbb_akshare"]
+
+[tool.uv.sources]
+openbb-akshare = { workspace = true }
 
 # uv.lock 会把解析时用的索引地址逐条写进去，因此项目必须显式声明官方 PyPI。
 # 否则谁本地配了镜像，提交的锁文件就带上镜像地址，海外贡献者与 CI 都无法复现。

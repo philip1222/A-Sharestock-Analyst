@@ -50,13 +50,41 @@ uv run akshare call stock_zh_a_hist \
 
 替代源的列名、字段单位与复权口径与东方财富不同，换源后先跑 `info` 核对再用。
 
-## 环境
+## OpenBB（可选）
 
-Python >= 3.11，依赖用 uv 管理：
+本仓库的 `uv sync` 会一并装上 `extensions/openbb_akshare`（依赖已锁进 `uv.lock`）。环境安装统一走 `./scripts/dev_sync.sh`，不要再单独敲 `uv sync` / `openbb-build`。
+
+当前只覆盖两条：
+
+```python
+from openbb import obb
+obb.akshare.historical(symbol="000001", start_date="2024-01-01", end_date="2024-01-31")
+obb.akshare.quote(symbol="000001")
+```
+
+日线失败时扩展内部会按东方财富 → 腾讯 → 新浪换源。龙虎榜、北向资金、宏观等没有 OpenBB 标准模型的接口，仍然走上面的 `akshare` CLI，不要为了这些需求去装 OpenBB。
+
+## 研究结论
+
+用户要某只 A 股的购买/多空结论时，跑研究流水线，不要临场把因子写进一次性脚本：
 
 ```bash
-uv sync
+uv run python -m research.conclude --symbol 000001
 ```
+
+stdout 是 JSON：立场（偏多 / 中性 / 偏空）、分数、置信度、各因子贡献与缺失项。这是研究输出，回答里保留免责声明，不要把它说成交易指令。要原始行情仍走 `akshare` CLI。新增因子放到 `research/factors/` 并在 `research/registry.py` 登记。
+
+默认 `rules_v1` 是加权打分。`--model spillover_dy` 用本股、标普 500、VIX、美元人民币、沪铜、北向净买额做 Diebold-Yilmaz 连通性；缺哪列就丢掉哪列。需要 API Key 的源不参与。
+
+## 环境
+
+Python >= 3.11，依赖用 uv 管理。克隆后或 `.venv` 不存在时跑一次：
+
+```bash
+./scripts/dev_sync.sh
+```
+
+它会执行 `uv sync`、`uv run openbb-build`，并把 `post-merge` / `post-checkout` 钩子拷进 `.git/hooks`。之后 `git pull` 或切分支若改到 `uv.lock`、`pyproject.toml`、`extensions/`，会自动再同步。不要把这两步拆开手敲。
 
 `uv run` 会自动使用 `.venv`，无需手动激活。
 

@@ -66,6 +66,13 @@ Conventions for `call`:
 Prefer this CLI for one-off data retrieval. Switch to Python when the result
 needs further computation, plotting, or persistence.
 
+This repository also ships an OpenBB V5 provider in `extensions/openbb_akshare/`.
+Run `./scripts/dev_sync.sh` after clone (and once on each new machine) to `uv sync`,
+register the provider, and install pull hooks that re-sync when the lockfile
+changes. Standardized A-share history and quotes are then available as
+`obb.akshare.historical` and `obb.akshare.quote`. All other interfaces stay on
+the CLI.
+
 ## Documentation
 
 Main entry points:

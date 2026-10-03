@@ -86,6 +86,18 @@ uv run akshare call stock_zh_a_hist_tx \
 
 需要对结果做多步计算、合并多个接口、绘图或落盘时，用 `uv run python`，并照常 `import akshare as ak` 调用。单纯取数一律走 CLI。
 
+## 何时改用 OpenBB
+
+只要标准化字段或 OpenBB REST / Workspace 时用：
+
+```python
+from openbb import obb
+obb.akshare.historical(symbol="000001", start_date="2024-01-01", end_date="2024-01-31")
+obb.akshare.quote(symbol="000001")
+```
+
+环境用 `./scripts/dev_sync.sh` 安装。日线换源由扩展内部处理；其余接口仍走 CLI。
+
 ## 补充资料
 
 - `llms.txt`：命名约定（`_em` 东方财富、`_sina` 新浪、`_ths` 同花顺等）与返回值约定

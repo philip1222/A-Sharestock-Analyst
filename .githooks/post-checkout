@@ -1,0 +1,25 @@
+#!/bin/sh
+# 切换分支之后：依赖清单有变动才重新同步环境。文件级 checkout 不触发。
+set -eu
+
+prev=${1:-}
+new=${2:-}
+is_branch=${3:-0}
+
+[ "$is_branch" = "1" ] || exit 0
+[ -n "$prev" ] && [ -n "$new" ] || exit 0
+# clone 时 prev 为全 0，此时 hook 还没装上，交给第一次手动 / Agent 跑 dev_sync.sh
+[ "$prev" != "0000000000000000000000000000000000000000" ] || exit 0
+
+ROOT=$(git rev-parse --show-toplevel)
+cd "$ROOT"
+
+if [ ! -f "$ROOT/scripts/dev_sync.sh" ]; then
+    exit 0
+fi
+
+if ! git diff --name-only "$prev" "$new" | grep -qE '^(uv\.lock|pyproject\.toml|extensions/)'; then
+    exit 0
+fi
+
+exec "$ROOT/scripts/dev_sync.sh"
