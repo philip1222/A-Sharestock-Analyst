@@ -12,5 +12,5 @@ alwaysApply: true
 1. 有代码或中文名称就先执行 `uv run python -m research.strategy --symbol 代码或名称`。
 2. 还问到其他市场影响时，再执行 `uv run python -m research.conclude --symbol 代码`。
 3. 只索要原始表或接口字段时，走 akshare CLI，不跑策略。
-4. 没有标的时，请用户给出一只股票的代码或名称，不要做全市场扫描。
+4. 没有标的时执行 `uv run python -m research.selection`。已有书籍候选时重复传入 `--book-candidate 代码`；限定行业时传 `--sector 板块名称`。
 5. 用命令 JSON 的动作、1/7/15/30 日窗口和价位作答。PDF 缺失不改变动作。不要在命令之外另编交易建议。
